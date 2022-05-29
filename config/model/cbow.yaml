@@ -1,0 +1,13 @@
+model: cbow
+network:
+  window_size: 2
+  hidden_size: 64
+  max_norm: 1
+policy:
+  lr: 0.025
+  batch_size: 100
+  save_interval: 1
+load:
+  path: null
+save:
+  path: saving/{model.model}/{data.set}
