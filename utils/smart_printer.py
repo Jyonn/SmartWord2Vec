@@ -38,6 +38,7 @@ class Bracket:
     METHOD = '<'
     DOT = '.'
     POINT = '·'
+    VERTICAL = '|'
 
 
 class Color:

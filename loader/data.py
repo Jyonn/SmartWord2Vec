@@ -1,8 +1,8 @@
 from UniTok import UniDep
-from torch.utils.data import DataLoader
 
 from loader.dataset import Word2VecDataset
 from model.auto_model import AutoModel
+from utils.smart_printer import printer
 from utils.splitter import Splitter
 
 
@@ -10,6 +10,8 @@ class Data:
     def __init__(self, data_config):
         self.config = data_config
         self.sequence_col = self.config.data.sequence_col
+
+        self.print = printer.DATA_Cr_
 
         self.depot = UniDep(self.config.data.dir)
         self.depot.shuffle(shuffle=self.config.data.shuffle)
@@ -37,4 +39,5 @@ class Data:
                 mode=mode,
                 splitter=self.splitter,
             )
+            self.print(f'{mode} dataset created, with {len(self.sets[mode])} samples in total')
 

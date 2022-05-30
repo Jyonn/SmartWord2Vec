@@ -1,0 +1,10 @@
+set: goodreads
+data:
+  dir: data/{data.set}/
+  shuffle: true
+  modes:
+    train:
+      weight: 8
+    dev:
+      weight: 2
+  sequence_col: list

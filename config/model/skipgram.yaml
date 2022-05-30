@@ -1,4 +1,4 @@
-model: cbow
+model: skipgram
 network:
   window_size: 2
   hidden_size: 64
