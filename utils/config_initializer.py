@@ -2,7 +2,7 @@ import os
 import re
 
 import yaml
-from UniTok.classify import Classify
+from oba import Obj
 
 from utils.smart_printer import printer, Color, Bracket
 
@@ -11,7 +11,7 @@ class ConfigInitializer:
     print = printer[('CONF-INIT', Bracket.CLASS, Color.MAGENTA)]
 
     @staticmethod
-    def get_config_value(config: Classify, path: str):
+    def get_config_value(config: Obj, path: str):
         path = path.split('.')
         value = config
         for key in path:
@@ -19,7 +19,7 @@ class ConfigInitializer:
         return value
 
     @classmethod
-    def format_config_path(cls, config: Classify, path: str):
+    def format_config_path(cls, config: Obj, path: str):
         dynamic_values = re.findall('{.*?}', path)
         for dynamic_value in dynamic_values:
             path = path.replace(dynamic_value, str(cls.get_config_value(config, dynamic_value[1:-1])))
@@ -28,15 +28,15 @@ class ConfigInitializer:
     @classmethod
     def init(cls, data_path, model_path):
         data_config = yaml.safe_load(open(data_path))
-        data_config = Classify(data_config)
+        data_config = Obj(data_config)
 
         model_config = yaml.safe_load(open(model_path))
-        model_config = Classify(model_config)
+        model_config = Obj(model_config)
 
         model_config.model = model_config.model.upper()
         cls.print('model:', model_config.model)
 
-        config = Classify(dict(model=model_config, data=data_config))
+        config = Obj(dict(model=model_config, data=data_config))
         data_config.data.dir = cls.format_config_path(config, data_config.data.dir)
         model_config.save.path = cls.format_config_path(config, model_config.save.path)
         cls.print('data dir:', data_config.data.dir)

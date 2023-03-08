@@ -27,9 +27,10 @@ if __name__ == '__main__':
         distance='euclidean',
         device=device,
     )
+    cluster_ids = cluster_ids.cpu().long().tolist()
 
     depot = UniDep(f'data/{args.dataset}')
-    item_vocab = depot.get_vocab('list')  # type: Vocab
+    item_vocab = depot.vocab_depot[depot.get_vocab('list')]  # type: Vocab
 
     save_path = f'saving/cluster/'
     os.makedirs(save_path, exist_ok=True)

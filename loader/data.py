@@ -17,7 +17,8 @@ class Data:
         self.depot.shuffle(shuffle=self.config.data.shuffle)
 
         self.splitter = Splitter()
-        for mode, mode_config in self.config.data.modes:
+        for mode in self.config.data.modes:
+            mode_config = self.config.data.modes[mode]
             self.splitter.add(mode, mode_config.weight)
 
         self.vocab_size = self.depot.get_vocab_size(self.sequence_col)
@@ -32,7 +33,7 @@ class Data:
             inputs.extend(inputs_)
             outputs.extend(outputs_)
 
-        for mode, _ in self.config.data.modes:
+        for mode in self.config.data.modes:
             self.sets[mode] = Word2VecDataset(
                 inputs=inputs,
                 outputs=outputs,
