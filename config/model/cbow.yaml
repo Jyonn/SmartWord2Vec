@@ -3,6 +3,8 @@ network:
   window_size: 2
   hidden_size: 64
   max_norm: 1
+
+
 policy:
   lr: 0.005
   batch_size: 5000

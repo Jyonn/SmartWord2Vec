@@ -84,13 +84,9 @@ class Worker:
             outputs = self.model.forward(
                 batch=batch['inputs'].to(self.device)
             )
-            if self.model.codebook_layers:
-                outputs, quantized_loss = outputs
-                loss = self.criterion(outputs, labels) + quantized_loss
-                loss_dict = dict(loss=loss.item(), quantized_loss=quantized_loss.item())
-            else:
-                loss = self.criterion(outputs, labels)
-                loss_dict = dict(loss=loss.item())
+            outputs, quantized_loss = outputs
+            loss = self.criterion(outputs, labels) + quantized_loss
+            loss_dict = dict(loss=loss.item(), quantized_loss=quantized_loss.item())
             loss.backward()
 
             if (step + 1) % self.config.model.policy.accumulation == 0:
@@ -119,13 +115,9 @@ class Worker:
                 outputs = self.model.forward(
                     batch=batch['inputs'].to(self.device)
                 )
-                if self.model.codebook_layers:
-                    outputs, quantized_loss = outputs
-                    loss = self.criterion(outputs, labels) + quantized_loss
-                    loss_dict = dict(loss=loss.item(), quantized_loss=quantized_loss.item())
-                else:
-                    loss = self.criterion(outputs, labels)
-                    loss_dict = dict(loss=loss.item())
+                outputs, quantized_loss = outputs
+                loss = self.criterion(outputs, labels) + quantized_loss
+                loss_dict = dict(loss=loss.item(), quantized_loss=quantized_loss.item())
 
                 total_loss.push(loss_dict)
 

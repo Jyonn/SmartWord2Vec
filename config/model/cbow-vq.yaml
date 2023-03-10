@@ -3,7 +3,7 @@ network:
   window_size: 2
   hidden_size: 64
   max_norm: 1
-  codebook_layers: 3
+  codebook_layers: 0
   commitment_cost: 0.25
 policy:
   lr: 0.005

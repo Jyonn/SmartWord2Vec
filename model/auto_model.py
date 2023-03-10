@@ -1,4 +1,5 @@
 # import torch
+import torch
 from torch import nn
 
 # from torch.nn import functional as F
@@ -12,7 +13,6 @@ class AutoModel(nn.Module):
             vocab_size: int,
             hidden_size: int,
             window_size: int,
-            # cookbook_size: int = None,
             codebook_layers: int = 1,
             commitment_cost: float = 0.25,
             max_norm: float = None,
@@ -24,10 +24,10 @@ class AutoModel(nn.Module):
             embedding_dim=hidden_size,
             max_norm=max_norm,
         )
-        self.linear = nn.Linear(
-            in_features=hidden_size,
-            out_features=vocab_size,
-        )
+        # self.linear = nn.Linear(
+        #     in_features=hidden_size,
+        #     out_features=vocab_size,
+        # )
 
         self.window_size = window_size
         # self.cookbook_size = cookbook_size
@@ -40,13 +40,12 @@ class AutoModel(nn.Module):
         #         embedding_dim=hidden_size,
         #     )
         #     self.cookbook.weight.data.normal_(0, 0.1)
-        if self.codebook_layers:
-            self.cascade_codebook = CascadeCodebookCluster(
-                embed_dim=hidden_size,
-                vocab_size=vocab_size,
-                num_layers=self.codebook_layers,
-                commitment_cost=commitment_cost,
-            )
+        self.cascade_codebook = CascadeCodebookCluster(
+            embed_dim=hidden_size,
+            vocab_size=vocab_size,
+            num_layers=self.codebook_layers,
+            commitment_cost=commitment_cost,
+        )
 
         # cookbook initialization
 
@@ -67,17 +66,9 @@ class AutoModel(nn.Module):
     #     return quantized, quantized_loss
 
     def internal_forward(self, embeds):
-        # if self.cookbook_size:
-        #     quantized, quantized_loss = self.get_quantized_loss(embeds)
-        #     distribution = self.linear(embeds)
-        #     return distribution, quantized_loss
-        if self.codebook_layers:
-            quantized = self.cascade_codebook.quantize(embeds)
-            qloss = self.cascade_codebook.get_qloss(embeds, quantized)
-            distribution = self.linear(embeds)
-            return distribution, qloss
-        distribution = self.linear(embeds)
-        return distribution
+        quantized, qloss = self.cascade_codebook.quantize(embeds, with_loss=True, transformed=False)
+        distribution = self.cascade_codebook.classify(embeds, transformed=False)
+        return distribution, qloss
 
     def generate_data(self, sequence):
         raise NotImplementedError
@@ -100,6 +91,7 @@ class CBow(AutoModel):
         batch = self.embeddings(batch)
         batch = batch.mean(axis=1)
         return self.internal_forward(batch)
+        # return self.linear(batch), torch.tensor(0)
 
 
 class SkipGram(AutoModel):
